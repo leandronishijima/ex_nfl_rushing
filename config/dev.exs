@@ -4,7 +4,7 @@ use Mix.Config
 config :ex_nfl_rushing, NflRushing.Repo,
   username: "postgres",
   password: "postgres",
-  database: "ex_nfl_rushing_dev",
+  database: "nfl_rushing",
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10

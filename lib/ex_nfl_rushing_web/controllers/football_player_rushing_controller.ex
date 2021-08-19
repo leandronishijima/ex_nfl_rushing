@@ -8,7 +8,16 @@ defmodule NflRushingWeb.FootballPlayerRushingController do
       conn,
       {:binary, Statistic.export_csv(params)},
       content_type: "application/csv",
-      filename: "export.csv"
+      filename: generate_file_name(params)
     )
+  end
+
+  defp generate_file_name(params) do
+    Enum.join([
+      DateTime.utc_now(),
+      "_export_",
+      Enum.map_join(params, "_", fn {key, val} -> ~s{#{key}_#{val}} end),
+      ".csv"
+    ])
   end
 end

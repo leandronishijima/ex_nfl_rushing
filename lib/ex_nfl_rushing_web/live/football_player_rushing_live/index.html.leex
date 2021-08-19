@@ -15,14 +15,14 @@
       <th>Position</th>
       <th>Attempts</th>
       <th>Attempts per game average</th>
-      <th><%= live_patch "Total rushing yards #{sort_order_icon("yds", @sort_by, @sort_order)}",
-        to: Routes.live_path(@socket, NflRushingWeb.FootballPlayerRushingLive.Index, %{sort_by: "yds", sort_order: @sort_order, player: @player}) %></th>
+      <th id="th-yds"><%= live_patch "Total rushing yards #{sort_order_icon("yds", @sort_by, @sort_order)}",
+        to: Routes.live_path(@socket, NflRushingWeb.FootballPlayerRushingLive.Index, %{sort_by: "yds", sort_order: @sort_order, player: @player}), id: "yds-sort" %></th>
       <th>Average yards per attempt</th>
       <th>Yards per game</th>
       <th><%= live_patch "Total rushing touchdowns #{sort_order_icon("td", @sort_by, @sort_order)}",
-        to: Routes.live_path(@socket, NflRushingWeb.FootballPlayerRushingLive.Index, %{sort_by: "td", sort_order: @sort_order, player: @player}) %></th>
+        to: Routes.live_path(@socket, NflRushingWeb.FootballPlayerRushingLive.Index, %{sort_by: "td", sort_order: @sort_order, player: @player}), id: "td-sort" %></th>
       <th><%= live_patch "Longest rush #{sort_order_icon("lng", @sort_by, @sort_order)}",
-        to: Routes.live_path(@socket, NflRushingWeb.FootballPlayerRushingLive.Index, %{sort_by: "lng", sort_order: @sort_order, player: @player}) %></th>
+        to: Routes.live_path(@socket, NflRushingWeb.FootballPlayerRushingLive.Index, %{sort_by: "lng", sort_order: @sort_order, player: @player}), id: "lng-sort" %></th>
       <th>first downs</th>
       <th>first down percentage</th>
       <th>20+ yards each</th>
@@ -40,7 +40,7 @@
         <td><%= football_player_rushing."att/g" %></td>
         <td><%= football_player_rushing.yds %></td>
         <td><%= football_player_rushing.avg %></td>
-        <td><%= football_player_rushing.yds %></td>
+        <td><%= football_player_rushing."yds/g" %></td>
         <td><%= football_player_rushing.td %></td>
         <td><%= football_player_rushing.lng %></td>
         <td><%= football_player_rushing."1st" %></td>

@@ -1,92 +1,128 @@
 defmodule NflRushing.StatisticTest do
   use NflRushing.DataCase
 
+  alias NflRushing.Repo
   alias NflRushing.Statistic
+  alias NflRushing.Statistic.FootballPlayerRushing
 
-  describe "football_players_rushings" do
-    alias NflRushing.Statistic.FootballPlayerRushing
+  @csv_columns "player;team;pos;att/g;att;yds;avg;yds/g;td;lng;1st;1st%;20+;40+;fum\r\n"
 
-    @valid_attrs %{"1st": 42, "1st%": 42, "20+": 42, "40+": 42, att: 42, "att/g": 42, avg: "120.5", fum: 42, lng: "some lng", player: "some player", pos: "some pos", td: 42, team: "some team", yds: 42, "yds/g": 42}
-    @update_attrs %{"1st": 43, "1st%": 43, "20+": 43, "40+": 43, att: 43, "att/g": 43, avg: "456.7", fum: 43, lng: "some updated lng", player: "some updated player", pos: "some updated pos", td: 43, team: "some updated team", yds: 43, "yds/g": 43}
-    @invalid_attrs %{"1st": nil, "1st%": nil, "20+": nil, "40+": nil, att: nil, "att/g": nil, avg: nil, fum: nil, lng: nil, player: nil, pos: nil, td: nil, team: nil, yds: nil, "yds/g": nil}
+  describe "statistic test" do
+    setup :insert_statistics
 
-    def football_player_rushing_fixture(attrs \\ %{}) do
-      {:ok, football_player_rushing} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Statistic.create_football_player_rushing()
-
-      football_player_rushing
+    test "list_football_players_rushings/1 without params" do
+      assert [
+               %FootballPlayerRushing{player: "Joe Banyard"},
+               %FootballPlayerRushing{player: "Joe Flacco"},
+               %FootballPlayerRushing{player: "Shaun Hill"}
+             ] = Statistic.list_football_players_rushings(%{})
     end
 
-    test "list_football_players_rushings/0 returns all football_players_rushings" do
-      football_player_rushing = football_player_rushing_fixture()
-      assert Statistic.list_football_players_rushings() == [football_player_rushing]
+    test "list_football_players_rushings/1 when params have filter by player, sorting by yds (desc)" do
+      assert [
+               %FootballPlayerRushing{player: "Joe Flacco", yds: 58},
+               %FootballPlayerRushing{player: "Joe Banyard", yds: 7}
+             ] =
+               Statistic.list_football_players_rushings(%{
+                 "player" => "joe",
+                 "sort_by" => "yds",
+                 "sort_order" => "desc"
+               })
     end
 
-    test "get_football_player_rushing!/1 returns the football_player_rushing with given id" do
-      football_player_rushing = football_player_rushing_fixture()
-      assert Statistic.get_football_player_rushing!(football_player_rushing.id) == football_player_rushing
+    test "list_football_players_rushings/1 when params sorting by lng (asc)" do
+      assert [
+               %FootballPlayerRushing{player: "Joe Banyard", lng: "7"},
+               %FootballPlayerRushing{player: "Shaun Hill", lng: "9"},
+               %FootballPlayerRushing{player: "Joe Flacco", lng: "16"}
+             ] =
+               Statistic.list_football_players_rushings(%{
+                 "sort_by" => "lng",
+                 "sort_order" => "asc"
+               })
     end
 
-    test "create_football_player_rushing/1 with valid data creates a football_player_rushing" do
-      assert {:ok, %FootballPlayerRushing{} = football_player_rushing} = Statistic.create_football_player_rushing(@valid_attrs)
-      assert football_player_rushing.1st == 42
-      assert football_player_rushing.1st% == 42
-      assert football_player_rushing.20+ == 42
-      assert football_player_rushing.40+ == 42
-      assert football_player_rushing.att == 42
-      assert football_player_rushing.att/g == 42
-      assert football_player_rushing.avg == Decimal.new("120.5")
-      assert football_player_rushing.fum == 42
-      assert football_player_rushing.lng == "some lng"
-      assert football_player_rushing.player == "some player"
-      assert football_player_rushing.pos == "some pos"
-      assert football_player_rushing.td == 42
-      assert football_player_rushing.team == "some team"
-      assert football_player_rushing.yds == 42
-      assert football_player_rushing.yds/g == 42
+    test "export_csv/1 when params have filter by player, sorting by yds (desc)" do
+      assert @csv_columns <>
+               "Joe Flacco;BAL;QB;2;2;58;3.5;7;0;16;0;0;0;0;0\r\n" <>
+               "Joe Banyard;JAX;RB;2;2;7;3.5;7;0;7;0;0;0;0;0\r\n" ==
+               Statistic.export_csv(%{
+                 "player" => "joe",
+                 "sort_by" => "yds",
+                 "sort_order" => "desc"
+               })
     end
 
-    test "create_football_player_rushing/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Statistic.create_football_player_rushing(@invalid_attrs)
+    test "export_csv/1 when params have filter by player, sorting by yds (asc)" do
+      assert @csv_columns <>
+               "Joe Banyard;JAX;RB;2;2;7;3.5;7;0;7;0;0;0;0;0\r\n" <>
+               "Joe Flacco;BAL;QB;2;2;58;3.5;7;0;16;0;0;0;0;0\r\n" ==
+               Statistic.export_csv(%{
+                 "player" => "joe",
+                 "sort_by" => "yds",
+                 "sort_order" => "asc"
+               })
     end
+  end
 
-    test "update_football_player_rushing/2 with valid data updates the football_player_rushing" do
-      football_player_rushing = football_player_rushing_fixture()
-      assert {:ok, %FootballPlayerRushing{} = football_player_rushing} = Statistic.update_football_player_rushing(football_player_rushing, @update_attrs)
-      assert football_player_rushing.1st == 43
-      assert football_player_rushing.1st% == 43
-      assert football_player_rushing.20+ == 43
-      assert football_player_rushing.40+ == 43
-      assert football_player_rushing.att == 43
-      assert football_player_rushing.att/g == 43
-      assert football_player_rushing.avg == Decimal.new("456.7")
-      assert football_player_rushing.fum == 43
-      assert football_player_rushing.lng == "some updated lng"
-      assert football_player_rushing.player == "some updated player"
-      assert football_player_rushing.pos == "some updated pos"
-      assert football_player_rushing.td == 43
-      assert football_player_rushing.team == "some updated team"
-      assert football_player_rushing.yds == 43
-      assert football_player_rushing.yds/g == 43
-    end
+  defp insert_statistics(_) do
+    joe_banyard =
+      Repo.insert!(%FootballPlayerRushing{
+        player: "Joe Banyard",
+        team: "JAX",
+        pos: "RB",
+        att: 2,
+        "att/g": 2,
+        yds: 7,
+        avg: 3.5,
+        "yds/g": 7,
+        td: 0,
+        lng: "7",
+        "1st": 0,
+        "1st%": 0,
+        "20+": 0,
+        "40+": 0,
+        fum: 0
+      })
 
-    test "update_football_player_rushing/2 with invalid data returns error changeset" do
-      football_player_rushing = football_player_rushing_fixture()
-      assert {:error, %Ecto.Changeset{}} = Statistic.update_football_player_rushing(football_player_rushing, @invalid_attrs)
-      assert football_player_rushing == Statistic.get_football_player_rushing!(football_player_rushing.id)
-    end
+    joe_flacco =
+      Repo.insert!(%FootballPlayerRushing{
+        player: "Joe Flacco",
+        team: "BAL",
+        pos: "QB",
+        att: 2,
+        "att/g": 2,
+        yds: 58,
+        avg: 3.5,
+        "yds/g": 7,
+        td: 0,
+        lng: "16",
+        "1st": 0,
+        "1st%": 0,
+        "20+": 0,
+        "40+": 0,
+        fum: 0
+      })
 
-    test "delete_football_player_rushing/1 deletes the football_player_rushing" do
-      football_player_rushing = football_player_rushing_fixture()
-      assert {:ok, %FootballPlayerRushing{}} = Statistic.delete_football_player_rushing(football_player_rushing)
-      assert_raise Ecto.NoResultsError, fn -> Statistic.get_football_player_rushing!(football_player_rushing.id) end
-    end
+    shaun_hill =
+      Repo.insert!(%FootballPlayerRushing{
+        player: "Shaun Hill",
+        team: "MIN",
+        pos: "QB",
+        att: 2,
+        "att/g": 2,
+        yds: 5,
+        avg: 3.5,
+        "yds/g": 7,
+        td: 0,
+        lng: "9",
+        "1st": 0,
+        "1st%": 0,
+        "20+": 0,
+        "40+": 0,
+        fum: 0
+      })
 
-    test "change_football_player_rushing/1 returns a football_player_rushing changeset" do
-      football_player_rushing = football_player_rushing_fixture()
-      assert %Ecto.Changeset{} = Statistic.change_football_player_rushing(football_player_rushing)
-    end
+    {:ok, statistics: [joe_banyard, joe_flacco, shaun_hill]}
   end
 end

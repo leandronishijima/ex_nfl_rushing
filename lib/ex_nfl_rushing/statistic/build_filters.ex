@@ -26,11 +26,15 @@ defmodule NflRushing.Statistic.BuildFilters do
 
   def order_by(query, %{"sort_by" => "lng", "sort_order" => order})
       when is_asc?(order) do
-    from(f in query, order_by: f.lng)
+    from(f in query,
+      order_by: fragment("NULLIF(regexp_replace(?, '\D', '', 'g'), '')::int", f.lng)
+    )
   end
 
   def order_by(query, %{"sort_by" => "lng"}) do
-    from(f in query, order_by: [desc: f.lng])
+    from(f in query,
+      order_by: fragment("NULLIF(regexp_replace(?, '\D', '', 'g'), '')::int DESC", f.lng)
+    )
   end
 
   def order_by(query, %{"sort_by" => "td", "sort_order" => order})

@@ -30,9 +30,9 @@ defmodule NflRushing.Statistic do
       |> Repo.all()
 
     [FootballPlayerRushing.attrs()]
-    |> Stream.concat(
+    |> Enum.concat(
       content
-      |> Stream.map(&FootballPlayerRushing.ordered_attrs/1)
+      |> Enum.map(&FootballPlayerRushing.ordered_attrs/1)
     )
     |> NflRushing.SemiColonCsv.dump_to_iodata()
     |> to_string

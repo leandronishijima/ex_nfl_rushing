@@ -6,67 +6,6 @@ defmodule NflRushingWeb.FootballPlayerRushingLiveTest do
   alias NflRushing.{Repo, Statistic.FootballPlayerRushing}
   alias NflRushingWeb.FootballPlayerRushingLive.Index
 
-  defp create_football_player_rushing(_) do
-    joe_banyard =
-      Repo.insert!(%FootballPlayerRushing{
-        player: "Joe Banyard",
-        team: "JAX",
-        pos: "RB",
-        att: 2,
-        "att/g": 2,
-        yds: 7,
-        avg: 3.5,
-        "yds/g": 7,
-        td: 0,
-        lng: "7",
-        "1st": 0,
-        "1st%": 0,
-        "20+": 0,
-        "40+": 0,
-        fum: 0
-      })
-
-    joe_flacco =
-      Repo.insert!(%FootballPlayerRushing{
-        player: "Joe Flacco",
-        team: "BAL",
-        pos: "QB",
-        att: 2,
-        "att/g": 2,
-        yds: 58,
-        avg: 3.5,
-        "yds/g": 7,
-        td: 2,
-        lng: "16",
-        "1st": 0,
-        "1st%": 0,
-        "20+": 0,
-        "40+": 0,
-        fum: 0
-      })
-
-    shaun_hill =
-      Repo.insert!(%FootballPlayerRushing{
-        player: "Shaun Hill",
-        team: "MIN",
-        pos: "QB",
-        att: 2,
-        "att/g": 2,
-        yds: 5,
-        avg: 3.5,
-        "yds/g": 7,
-        td: 1,
-        lng: "9",
-        "1st": 0,
-        "1st%": 0,
-        "20+": 0,
-        "40+": 0,
-        fum: 0
-      })
-
-    {:ok, statistics: [joe_banyard, joe_flacco, shaun_hill]}
-  end
-
   describe "Index" do
     setup [:create_football_player_rushing]
 
@@ -443,5 +382,66 @@ defmodule NflRushingWeb.FootballPlayerRushingLiveTest do
                       {:redirect, _,
                        %{to: "/export/csv?player=shaun&sort_by=yds&sort_order=desc"}}}
     end
+  end
+
+  defp create_football_player_rushing(_) do
+    joe_banyard =
+      Repo.insert!(%FootballPlayerRushing{
+        player: "Joe Banyard",
+        team: "JAX",
+        pos: "RB",
+        att: 2,
+        "att/g": 2,
+        yds: 7,
+        avg: 3.5,
+        "yds/g": 7,
+        td: 0,
+        lng: "7",
+        "1st": 0,
+        "1st%": 0,
+        "20+": 0,
+        "40+": 0,
+        fum: 0
+      })
+
+    joe_flacco =
+      Repo.insert!(%FootballPlayerRushing{
+        player: "Joe Flacco",
+        team: "BAL",
+        pos: "QB",
+        att: 2,
+        "att/g": 2,
+        yds: 58,
+        avg: 3.5,
+        "yds/g": 7,
+        td: 2,
+        lng: "16",
+        "1st": 0,
+        "1st%": 0,
+        "20+": 0,
+        "40+": 0,
+        fum: 0
+      })
+
+    shaun_hill =
+      Repo.insert!(%FootballPlayerRushing{
+        player: "Shaun Hill",
+        team: "MIN",
+        pos: "QB",
+        att: 2,
+        "att/g": 2,
+        yds: 5,
+        avg: 3.5,
+        "yds/g": 7,
+        td: 1,
+        lng: "9",
+        "1st": 0,
+        "1st%": 0,
+        "20+": 0,
+        "40+": 0,
+        fum: 0
+      })
+
+    {:ok, statistics: [joe_banyard, joe_flacco, shaun_hill]}
   end
 end

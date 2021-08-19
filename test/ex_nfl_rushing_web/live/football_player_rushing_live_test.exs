@@ -386,5 +386,46 @@ defmodule NflRushingWeb.FootballPlayerRushingLiveTest do
 
       assert_receive {_, {:patch, _, %{to: "/?player=&sort_by=lng&sort_order=desc"}}}
     end
+
+    test "lists all football_players_rushings with sort by lng and player name", %{
+      conn: conn,
+      statistics: [_, _, %{id: shaun_id} = _shaun_hill]
+    } do
+      {:ok, index_live, _html} = live(conn, Routes.live_path(conn, Index))
+
+      index_live
+      |> element("form")
+      |> render_change(%{player: "shaun"})
+
+      assert [
+               {"tbody", [{"id", "football_players_rushings"}],
+                [
+                  {"tr", [{"id", "football_player_rushing-#{shaun_id}"}],
+                   [
+                     {"td", [], ["Shaun Hill"]},
+                     {"td", [], ["MIN"]},
+                     {"td", [], ["QB"]},
+                     {"td", [], ["2"]},
+                     {"td", [], ["2"]},
+                     {"td", [], ["5"]},
+                     {"td", [], ["3.5"]},
+                     {"td", [], ["7"]},
+                     {"td", [], ["1"]},
+                     {"td", [], ["9"]},
+                     {"td", [], ["0"]},
+                     {"td", [], ["0"]},
+                     {"td", [], ["0"]},
+                     {"td", [], ["0"]},
+                     {"td", [], ["0"]}
+                   ]}
+                ]}
+             ] ==
+               index_live
+               |> element("#lng-sort")
+               |> render_click()
+               |> Floki.find("#football_players_rushings")
+
+      assert_receive {_, {:patch, _, %{to: "/?player=shaun&sort_by=lng&sort_order=desc"}}}
+    end
   end
 end

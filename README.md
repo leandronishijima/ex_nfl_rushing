@@ -62,16 +62,35 @@ If you have any questions regarding requirements, do not hesitate to email your 
 
 ### Installation and running this solution
 
-```bash
-docker run --name nfl_rushing -e POSTGRES_PASSWORD=postgres -d -p 5432:5432 postgres
-```
-
-```bash
-mix ecto.setup
-```
+\*\* optional
+To make the work easier, I created a .tools-versions with elixir/erlang version used in this challenge, you can install the versions with this command:
 
 ```bash
 asdf install
 ```
 
-... TODO
+1. Create a postgres docker instance
+
+```bash
+docker run --name nfl_rushing -e POSTGRES_PASSWORD=postgres -d -p 5432:5432 postgres
+```
+
+2. Get all dependencies
+
+```bash
+mix deps.get
+```
+
+3. Run setup to create the database, run migrates and execute seeds file to load all statistics from json file (rushing.json)
+
+```bash
+mix ecto.setup
+```
+
+4. Execute phoenix project
+
+```bash
+iex -S mix phx.server
+```
+
+5. Access the url on browser: http://localhost:4000/

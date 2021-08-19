@@ -5,7 +5,7 @@
 </form>
 
 <%= link "Export .csv", to: Routes.football_player_rushing_path(@socket, :export_results, player: @player, sort_by: @sort_by, sort_order: @sort_order),
-  class: "btn btn-light", target: "_blank" %>
+  class: "btn btn-light", target: "_blank", id: "export_csv_link" %>
 
 <table>
   <thead>

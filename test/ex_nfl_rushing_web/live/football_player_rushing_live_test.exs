@@ -427,5 +427,21 @@ defmodule NflRushingWeb.FootballPlayerRushingLiveTest do
 
       assert_receive {_, {:patch, _, %{to: "/?player=shaun&sort_by=lng&sort_order=desc"}}}
     end
+
+    test "passing all query params to export csv feature", %{conn: conn} do
+      {:ok, index_live, _html} = live(conn, Routes.live_path(conn, Index))
+
+      index_live
+      |> element("form")
+      |> render_change(%{player: "shaun"})
+
+      index_live
+      |> element("#export_csv_link")
+      |> render_click()
+
+      assert_receive {_,
+                      {:redirect, _,
+                       %{to: "/export/csv?player=shaun&sort_by=yds&sort_order=desc"}}}
+    end
   end
 end

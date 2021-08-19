@@ -88,7 +88,7 @@ defmodule NflRushingWeb.FootballPlayerRushingLiveTest do
       conn: conn,
       statistics: [joe_banyard, joe_flacco, shaun_hill]
     } do
-      {:ok, index_live, html} = live(conn, Routes.live_path(conn, Index))
+      {:ok, index_live, _html} = live(conn, Routes.live_path(conn, Index))
 
       html =
         index_live
@@ -167,6 +167,84 @@ defmodule NflRushingWeb.FootballPlayerRushingLiveTest do
                |> element("#yds-sort")
                |> render_click()
                |> Floki.find("#football_players_rushings")
+
+      assert_receive {_, {:patch, _, %{to: "/?player=&sort_by=yds&sort_order=desc"}}}
+    end
+
+    test "lists all football_players_rushings with sort by yds asc", %{conn: conn} do
+      {:ok, index_live, _html} = live(conn, Routes.live_path(conn, Index))
+
+      index_live
+      |> element("#yds-sort")
+      |> render_click()
+
+      assert_receive {_, {:patch, _, %{to: "/?player=&sort_by=yds&sort_order=desc"}}}
+
+      assert [
+               {"tbody", [{"id", "football_players_rushings"}],
+                [
+                  {"tr", _,
+                   [
+                     {"td", _, ["Shaun Hill"]},
+                     {"td", _, ["MIN"]},
+                     {"td", _, ["QB"]},
+                     {"td", _, ["2"]},
+                     {"td", _, ["2"]},
+                     {"td", _, ["5"]} = _yds_hill,
+                     {"td", _, ["3.5"]},
+                     {"td", _, ["7"]},
+                     {"td", _, ["1"]},
+                     {"td", _, ["9"]},
+                     {"td", _, ["0"]},
+                     {"td", _, ["0"]},
+                     {"td", _, ["0"]},
+                     {"td", _, ["0"]},
+                     {"td", _, ["0"]}
+                   ]},
+                  {"tr", _,
+                   [
+                     {"td", _, ["Joe Banyard"]},
+                     {"td", _, ["JAX"]},
+                     {"td", _, ["RB"]},
+                     {"td", _, ["2"]},
+                     {"td", _, ["2"]},
+                     {"td", _, ["7"]} = _yds_banyard,
+                     {"td", _, ["3.5"]},
+                     {"td", _, ["7"]},
+                     {"td", _, ["0"]},
+                     {"td", _, ["7"]},
+                     {"td", _, ["0"]},
+                     {"td", _, ["0"]},
+                     {"td", _, ["0"]},
+                     {"td", _, ["0"]},
+                     {"td", _, ["0"]}
+                   ]},
+                  {"tr", _,
+                   [
+                     {"td", _, ["Joe Flacco"]},
+                     {"td", _, ["BAL"]},
+                     {"td", _, ["QB"]},
+                     {"td", _, ["2"]},
+                     {"td", _, ["2"]},
+                     {"td", _, ["58"]} = _yds_flacco,
+                     {"td", _, ["3.5"]},
+                     {"td", _, ["7"]},
+                     {"td", _, ["2"]},
+                     {"td", _, ["16"]},
+                     {"td", _, ["0"]},
+                     {"td", _, ["0"]},
+                     {"td", _, ["0"]},
+                     {"td", _, ["0"]},
+                     {"td", _, ["0"]}
+                   ]}
+                ]}
+             ] =
+               index_live
+               |> element("#yds-sort")
+               |> render_click()
+               |> Floki.find("#football_players_rushings")
+
+      assert_receive {_, {:patch, _, %{to: "/?player=&sort_by=yds&sort_order=asc"}}}
     end
 
     test "lists all football_players_rushings with sort by td", %{conn: conn} do
@@ -235,6 +313,8 @@ defmodule NflRushingWeb.FootballPlayerRushingLiveTest do
                |> element("#td-sort")
                |> render_click()
                |> Floki.find("#football_players_rushings")
+
+      assert_receive {_, {:patch, _, %{to: "/?player=&sort_by=td&sort_order=desc"}}}
     end
 
     test "lists all football_players_rushings with sort by lng", %{conn: conn} do
@@ -303,6 +383,8 @@ defmodule NflRushingWeb.FootballPlayerRushingLiveTest do
                |> element("#lng-sort")
                |> render_click()
                |> Floki.find("#football_players_rushings")
+
+      assert_receive {_, {:patch, _, %{to: "/?player=&sort_by=lng&sort_order=desc"}}}
     end
   end
 end

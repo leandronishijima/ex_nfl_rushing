@@ -25,11 +25,13 @@ defmodule NflRushingWeb.FootballPlayerRushingLive.Index do
           "yds"
       end
 
+    sort_order = invert_sort_order(params["sort_order"])
+
     {:noreply,
      assign(socket,
        player: params["player"],
        sort_by: sort_by,
-       sort_order: invert_sort_order(params["sort_order"]),
+       sort_order: sort_order,
        football_players_rushings: list_football_players_rushings(params)
      )}
   end
@@ -39,7 +41,11 @@ defmodule NflRushingWeb.FootballPlayerRushingLive.Index do
   defp invert_sort_order(_), do: :desc
 
   @impl true
-  def handle_event("search", %{"player" => player_name} = params, socket) do
+  def handle_event("search", %{"player" => player_name}, socket) do
+    %{sort_by: sort_by, sort_order: sort_order} = socket.assigns
+
+    params = %{"player" => player_name, "sort_by" => sort_by, "sort_order" => sort_order}
+
     {:noreply,
      assign(socket,
        player: player_name,
